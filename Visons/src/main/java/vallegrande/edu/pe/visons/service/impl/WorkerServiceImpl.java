@@ -35,6 +35,11 @@ public class WorkerServiceImpl implements WorkerService {
     }
 
     @Override
+    public List<Worker> findByUbigeo(Integer ubigeoId) {
+        return workerRepository.findByUbigeoIdAndIsActive(ubigeoId, Boolean.TRUE);
+    }
+
+    @Override
     public Optional<Worker> findById(Integer id) {
         return workerRepository.findById(id);
     }

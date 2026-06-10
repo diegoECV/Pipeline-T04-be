@@ -11,6 +11,8 @@ public interface WorkerService {
 
     List<Worker> findByState(String state);
 
+    List<Worker> findByUbigeo(Integer ubigeoId);
+
     Optional<Worker> findById(Integer id);
 
     Worker save(Worker worker);

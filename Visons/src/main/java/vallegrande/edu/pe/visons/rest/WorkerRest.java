@@ -42,6 +42,12 @@ public class WorkerRest {
         return workerService.findByState(state);
     }
 
+    @GetMapping("/ubigeo/{ubigeoId}")
+    @Operation(summary = "Get Workers By Ubigeo", description = "Get active workers assigned to a ubigeo")
+    public List<Worker> findByUbigeo(@PathVariable Integer ubigeoId) {
+        return workerService.findByUbigeo(ubigeoId);
+    }
+
     @GetMapping("/{id}")
     @Operation(summary = "Get Worker By ID", description = "Get Worker By ID")
     public Optional<Worker> findById(@PathVariable Integer id) {

@@ -10,6 +10,8 @@ import vallegrande.edu.pe.visons.model.Worker;
 public interface WorkerRepository extends JpaRepository<Worker, Integer> {
 	java.util.List<Worker> findByIsActive(Boolean isActive);
 
+	java.util.List<Worker> findByUbigeoIdAndIsActive(Integer ubigeoId, Boolean isActive);
+
 	Optional<Worker> findByDocumentNumber(String documentNumber);
 
 	Optional<Worker> findByEmailIgnoreCase(String email);
