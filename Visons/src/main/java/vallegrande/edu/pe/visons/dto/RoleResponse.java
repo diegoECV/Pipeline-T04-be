@@ -8,4 +8,5 @@ public class RoleResponse {
     private String name;
     private String description;
     private Long userCount;
+    private Boolean assignable;
 }

@@ -11,6 +11,8 @@ public interface RoleService {
 
     List<RoleResponse> findAll();
 
+    List<RoleResponse> findAssignable();
+
     Optional<RoleResponse> findById(Integer id);
 
     RoleResponse save(RoleRequest request);

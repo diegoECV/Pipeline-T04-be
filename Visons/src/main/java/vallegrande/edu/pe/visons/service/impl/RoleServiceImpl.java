@@ -42,6 +42,13 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    public List<RoleResponse> findAssignable() {
+        return findAll().stream()
+                .filter(RoleResponse::getAssignable)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Optional<RoleResponse> findById(Integer id) {
         return roleRepository.findById(id).map(this::toRoleResponse);
     }
@@ -120,6 +127,7 @@ public class RoleServiceImpl implements RoleService {
         response.setName(role.getName());
         response.setDescription(role.getDescription());
         response.setUserCount(userRoleRepository.countUsersByRoleId(role.getRoleId()));
+        response.setAssignable(role.getName() != null && !"ADMIN".equalsIgnoreCase(role.getName().trim()));
         return response;
     }
 }

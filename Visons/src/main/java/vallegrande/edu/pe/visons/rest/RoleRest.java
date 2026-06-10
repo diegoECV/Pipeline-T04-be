@@ -35,6 +35,11 @@ public class RoleRest {
         return roleService.findAll();
     }
 
+    @GetMapping("/assignable")
+    public List<RoleResponse> findAssignable() {
+        return roleService.findAssignable();
+    }
+
     @GetMapping("/{id}")
     public Optional<RoleResponse> findById(@PathVariable Integer id) {
         return roleService.findById(id);
