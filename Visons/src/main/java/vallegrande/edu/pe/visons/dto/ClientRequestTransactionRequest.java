@@ -21,9 +21,11 @@ public class ClientRequestTransactionRequest {
     @Size(min = 2, max = 100, message = "lastName debe tener entre 2 y 100 caracteres")
     private String lastName;
 
-    @Size(max = 200, message = "companyName debe tener como maximo 200 caracteres")
+    @NotBlank(message = "companyName es requerido")
+    @Size(min = 2, max = 200, message = "companyName debe tener entre 2 y 200 caracteres")
     private String companyName;
 
+    @NotBlank(message = "taxId es requerido")
     @Pattern(regexp = "^\\s*$|^[0-9]{8,20}$", message = "taxId debe contener solo numeros entre 8 y 20 digitos")
     private String taxId;
 
@@ -43,5 +45,6 @@ public class ClientRequestTransactionRequest {
 
     private Integer ubigeoId;
 
+    @Size(max = 500, message = "comments debe tener como maximo 500 caracteres")
     private String comments;
 }
