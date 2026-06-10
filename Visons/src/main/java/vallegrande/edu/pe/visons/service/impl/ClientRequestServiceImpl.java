@@ -33,6 +33,7 @@ import vallegrande.edu.pe.visons.repository.UbigeoRepository;
 import vallegrande.edu.pe.visons.repository.UserAccountRepository;
 import vallegrande.edu.pe.visons.repository.UserRoleRepository;
 import vallegrande.edu.pe.visons.repository.UserTypeRepository;
+import vallegrande.edu.pe.visons.service.AuditLogService;
 import vallegrande.edu.pe.visons.service.ClientRequestService;
 
 @Slf4j
@@ -52,6 +53,7 @@ public class ClientRequestServiceImpl implements ClientRequestService {
     private final RoleRepository roleRepository;
     private final UserRoleRepository userRoleRepository;
     private final UbigeoRepository ubigeoRepository;
+    private final AuditLogService auditLogService;
     private final JavaMailSender mailSender;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final String clientLoginUrl;
@@ -64,6 +66,7 @@ public class ClientRequestServiceImpl implements ClientRequestService {
             RoleRepository roleRepository,
             UserRoleRepository userRoleRepository,
             UbigeoRepository ubigeoRepository,
+            AuditLogService auditLogService,
             ObjectProvider<JavaMailSender> mailSenderProvider,
             Environment environment) {
         this.clientRequestRepository = clientRequestRepository;
@@ -73,6 +76,7 @@ public class ClientRequestServiceImpl implements ClientRequestService {
         this.roleRepository = roleRepository;
         this.userRoleRepository = userRoleRepository;
         this.ubigeoRepository = ubigeoRepository;
+        this.auditLogService = auditLogService;
         this.mailSender = mailSenderProvider.getIfAvailable();
         this.clientLoginUrl = environment.getProperty("app.client-login-url", "http://localhost:4200/login");
         this.mailFrom = environment.getProperty("app.mail.from", "no-reply@visons.local");
@@ -155,6 +159,8 @@ public class ClientRequestServiceImpl implements ClientRequestService {
 
         Role clientRole = getOrCreateRole(ROLE_CLIENT);
         userRoleRepository.assignRole(savedUser.getUserId(), clientRole.getRoleId());
+        auditLogService.register(resolveReviewer(request), "APPROVE_CLIENT_REQUEST", "CLIENT_REQUESTS",
+                clientRequest.getRequestId(), "Cliente creado con userId=" + savedUser.getUserId());
 
         clientRequest.setStatus(STATUS_APPROVED);
         clientRequest.setReviewedBy(resolveReviewer(request));
@@ -176,6 +182,8 @@ public class ClientRequestServiceImpl implements ClientRequestService {
             clientRequest.setComments(request.getComments().trim());
         }
         clientRequestRepository.save(clientRequest);
+        auditLogService.register(resolveReviewer(request), "REJECT_CLIENT_REQUEST", "CLIENT_REQUESTS",
+                clientRequest.getRequestId(), clientRequest.getComments());
 
         sendRejectionEmail(requireText(clientRequest.getEmail(), "email"),
                 requireText(clientRequest.getFirstName(), "firstName"),
