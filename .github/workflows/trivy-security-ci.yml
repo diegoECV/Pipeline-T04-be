@@ -1,0 +1,48 @@
+name: Trivy Security Scan
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+  schedule:
+    # 08:00 AM Peru time (UTC-5) = 01:00 PM UTC
+    - cron: '0 13 * * *'
+  workflow_dispatch:
+
+jobs:
+  trivy-security:
+    name: Trivy Filesystem Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 25
+          cache: maven
+          cache-dependency-path: Visons/pom.xml
+
+      - name: Build Project
+        run: mvn clean package -DskipTests
+        working-directory: Visons
+
+      - name: Run Trivy Filesystem Scan
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          severity: UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
+
+      - name: Pipeline Finished
+        run: echo "Trivy scan completed successfully"
